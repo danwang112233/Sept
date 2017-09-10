@@ -7,9 +7,9 @@ a="4.010"
 alpha="89.81"
 
 #-------------------------------------------------REPLICAS IN EACH DIRECTION
-nx="1"
-ny="1"
-nz="1"
+nx="10"
+ny="10"
+nz="10"
 
 #-------------------------------------------------GENERATE DATA FILE
 python molsetup.py $a $nx $ny $nz
