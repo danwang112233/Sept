@@ -1,0 +1,269 @@
+LAMMPS (7 Sep 2016)
+# Input file for lammps simulation using the Isotropic-anharmonic Shell Model
+# proposed by Vielma and Schneider based on PBE Generalized Gradient
+# Approximation(GGA) to Density Functional Theory(DFT):
+# [Vielma Schneider 2013](http://dx.doi.org/10.1063/1.4827475)
+
+# Vishal Boddu, June 2016
+
+# ------------------------ INITIALIZATION ---------------------------------
+
+units 		metal
+dimension	3
+boundary	p	p	s
+atom_style	full
+
+# ----------------------- ATOM DEFINITION ----------------------------
+
+fix csinfo all property/atom i_CSID
+read_data atom.data fix csinfo NULL CS-Info
+  orthogonal box = (0 0 0) to (4.01 4.01 4.01)
+  2 by 2 by 2 MPI processor grid
+  reading atoms ...
+  10 atoms
+  scanning bonds ...
+  1 = max bonds/atom
+  reading bonds ...
+  5 bonds
+  1 = max # of 1-2 neighbors
+  0 = max # of 1-3 neighbors
+  0 = max # of 1-4 neighbors
+  1 = max # of special neighbors
+WARNING: Proc sub-domain size < neighbor skin, could lead to lost atoms (/tmp/dan/spack-stage/spack-stage-5I_aA6/lammps-feature-CORESHELL-pol/src/domain.cpp:936)
+
+#change_box all x scale ${a} y scale ${b} z scale ${c} remap
+#change_box all triclinic xy delta ${XY} xz delta ${XZ} yz delta ${YZ} remap
+#change_box all triclinic xy delta 0.0 xz delta 0.0 yz delta 0.0 remap
+
+group cores type 1 3 5
+5 atoms in group cores
+group shells type 2 4 6
+5 atoms in group shells
+
+neighbor 0.5 bin
+neigh_modify delay 10 check yes
+comm_modify vel yes
+
+# ------------------------ FORCE FIELDS ------------------------------
+
+#kspace_style ewald 1.0e-6
+#pair_style   born/coul/long/cs 8.0
+pair_style   born/coul/wolf/cs 0.25 16.0 14.5
+#pair_style   born/coul/wolf 0.25 16.0 14.5
+
+#------------------------ A,  rho, sigma=0,     C,      D
+pair_coeff	*	*	 0.0000	1.0000	0.000	0.0000	0.000
+pair_coeff	2	6	7149.81	0.3019	0.000	0.0000	0.000
+pair_coeff	4	6	7200.27	0.2303	0.000	0.0000	0.000
+pair_coeff	6	6	3719.60	0.3408	0.000	597.17	0.000
+pair_modify tail no
+
+bond_style class2
+bond_coeff	1	0.0	149.255	0.0		   0.0000000
+bond_coeff	2	0.0	153.070	0.0		 20.83333333
+bond_coeff	3	0.0	 18.465	0.0		208.33333333
+change_box all triclinic xy delta 0.0132976391992 yz delta 0.0132976391992 xz delta 0.0132976391992 remap
+  triclinic box = (0 0 -0.00060158) to (4.01 4.01 2.0056) with tilt (0 0 0)
+  triclinic box = (0 0 -0.000802201) to (4.01 4.01 2.0058) with tilt (0.0132976 0 0)
+  triclinic box = (0 0 -0.00100286) to (4.01 4.01 2.006) with tilt (0.0132976 0 0.0132976)
+  triclinic box = (0 0 -0.00120356) to (4.01 4.01 2.0062) with tilt (0.0132976 0.0132976 0.0132976)
+compute dr all displace/atom
+reset_timestep 0
+dump dump_positions all atom 1000 atomdump
+dump dump_displ all custom 1000 displdump id type c_dr[1] c_dr[2] c_dr[3]
+thermo 100
+thermo_style custom step etotal pe ke fnorm ecoul elong ebond temp press pxx pyy pzz lx ly lz
+compute CSequ all temp/cs cores shells
+thermo_modify temp CSequ
+fix EF all efield 0.000289 0.000289 0.000289
+fix_modify EF energy yes
+min_style quickmin
+minimize 0.0 1e-04 30000 100000
+WARNING: Resetting reneighboring criteria during minimization (/tmp/dan/spack-stage/spack-stage-5I_aA6/lammps-feature-CORESHELL-pol/src/min.cpp:168)
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 16.5
+  ghost atom cutoff = 16.5
+  binsize = 8.25 -> bins = 1 1 1
+Memory usage per processor = 9.14782 Mbytes
+Step TotEng PotEng KinEng Fnorm E_coul E_long E_bond Temp Press Pxx Pyy Pzz Lx Ly Lz 
+       0   -113.30085   -113.30085            0    24.538466   -120.74773            0            0            0    -418200.9   -589559.35   -589500.83   -75542.517         4.01         4.01    2.0070059 
+     100   -114.63721   -114.63752 0.00030900776   0.13891689    -126.6651            0    1.7776348   0.59764702    -202297.2    -296608.1    -296539.8   -13739.549         4.01         4.01    2.0070059 
+     200    -114.6405   -114.64051 7.2201231e-06   0.21549629   -126.82358            0    1.8010486  0.013964326   -189348.61   -284511.98   -284438.25    910.23171         4.01         4.01    2.0070059 
+     300   -114.64597   -114.64599 2.3075285e-05   0.36295243   -126.90773            0    1.8179863  0.044629544   -184607.57   -279300.39      -279213    4708.0334         4.01         4.01    2.0070059 
+     400    -114.6611   -114.66117 6.8388143e-05   0.53205317   -127.12209            0    1.8713311   0.13226842   -174801.02   -266796.82   -266672.97    9108.5896         4.01         4.01    2.0070059 
+     500   -114.68929   -114.68962 0.00033316682   0.50915913   -127.60769            0    2.0081467   0.64437268   -154910.68   -238494.55   -238314.82    12161.214         4.01         4.01    2.0070059 
+     600   -114.71407   -114.71507 0.00099432388     0.352591   -128.30714            0    2.2304397    1.9231061   -130122.16   -197983.92   -197823.55     5484.081         4.01         4.01    2.0070059 
+     700   -114.72036   -114.72052 0.00015627605  0.097115446   -128.60933            0    2.3166502   0.30225103    -119318.4   -181430.83    -181374.9    4856.8267         4.01         4.01    2.0070059 
+     800   -114.72092   -114.72102 0.00010451012  0.072426159   -128.67411            0    2.3406879   0.20213136   -118219.01   -178405.67   -178415.89    2165.0725         4.01         4.01    2.0070059 
+     900   -114.72107   -114.72108 4.8646433e-07 0.0074491397   -128.69083            0    2.3497431 0.00094086296   -118379.09    -177746.2   -177788.44    397.38312         4.01         4.01    2.0070059 
+    1000   -114.72108   -114.72108 2.841683e-09 0.0043863336   -128.69529            0     2.351472 5.4960541e-06   -118343.66   -177573.96   -177632.84    175.82471         4.01         4.01    2.0070059 
+    1100   -114.72108   -114.72108 1.8618616e-08 0.0013841016   -128.69671            0    2.3522227 3.6009971e-05    -118357.3   -177520.77   -177587.52    36.380108         4.01         4.01    2.0070059 
+    1200   -114.72108   -114.72108 1.999237e-09 0.00034048381   -128.69709            0    2.3523344 3.8666926e-06   -118350.28   -177505.75   -177576.35    31.266386         4.01         4.01    2.0070059 
+    1296   -114.72108   -114.72108 6.5664598e-11 9.6677005e-05   -128.69723            0    2.3524023 1.2700086e-07   -118350.57   -177499.83   -177572.47    20.602878         4.01         4.01    2.0070059 
+Loop time of 1.80394 on 8 procs for 1296 steps with 10 atoms
+
+33.8% CPU use with 8 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -113.300850907     -114.721081706     -114.721081706
+  Force two-norm initial, final = 24.5385 9.6677e-05
+  Force max component initial, final = 12.8156 2.73029e-05
+  Final line search alpha, max atom move = 0 0
+  Iterations, force evaluations = 1296 1296
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0019539  | 0.19847    | 0.51989    |  44.0 | 11.00
+Bond    | 0.00061125 | 0.00091302 | 0.0012141  |   0.8 |  0.05
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 1.1262     | 1.4532     | 1.641      |  16.2 | 80.56
+Output  | 0.0024099  | 0.0029918  | 0.0046995  |   1.5 |  0.17
+Modify  | 0.00071832 | 0.0010668  | 0.001321   |   0.6 |  0.06
+Other   |            | 0.1473     |            |       |  8.17
+
+Nlocal:    1.25 ave 2 max 0 min
+Histogram: 3 0 0 0 0 0 0 0 0 5
+Nghost:    808.75 ave 810 max 808 min
+Histogram: 5 0 0 0 0 0 0 0 0 3
+Neighs:    331.125 ave 857 max 0 min
+Histogram: 3 0 0 3 0 0 0 0 0 2
+
+Total # of neighbors = 2649
+Ave neighs/atom = 264.9
+Ave special neighs/atom = 1
+Neighbor list builds = 0
+Dangerous builds = 0
+unfix EF
+min_style fire
+minimize 0.0 1e-05 60000 100000
+WARNING: Resetting reneighboring criteria during minimization (/tmp/dan/spack-stage/spack-stage-5I_aA6/lammps-feature-CORESHELL-pol/src/min.cpp:168)
+Memory usage per processor = 9.52282 Mbytes
+Step TotEng PotEng KinEng Fnorm E_coul E_long E_bond Temp Press Pxx Pyy Pzz Lx Ly Lz 
+    1296   -114.72236   -114.72236            0 0.0045574177   -128.69723            0    2.3524023            0   -116909.67   -175338.81   -175410.56    20.352039         4.01         4.01     2.031742 
+    1300   -114.72236   -114.72236 3.8275959e-08 0.0025868761   -128.69746            0    2.3525392 7.4028927e-05    -116907.2   -175331.37   -175403.27    13.048644         4.01         4.01     2.031742 
+    1400   -114.72236   -114.72236 1.1922701e-08 0.0011138738    -128.6993            0    2.3531413 2.3059507e-05   -116838.16   -175237.43   -175309.84    32.793979         4.01         4.01     2.031742 
+    1500   -114.72236   -114.72236 7.0266785e-12 0.00054314244    -128.6996            0    2.3532172 1.3590188e-08   -116827.95   -175217.46   -175289.93    23.541512         4.01         4.01     2.031742 
+    1600   -114.72236   -114.72236 2.2389244e-09 0.00035246509   -128.69975            0    2.3532916 4.3302683e-06   -116829.26   -175214.14   -175287.05    13.399772         4.01         4.01     2.031742 
+    1700   -114.72236   -114.72236 4.204357e-10 0.00018040915   -128.69982            0    2.3533135 8.1315802e-07   -116829.02   -175210.28   -175282.95    6.1572677         4.01         4.01     2.031742 
+    1800   -114.72236   -114.72236 4.6606052e-11 8.8565128e-05   -128.69984            0    2.3533282 9.0140026e-08   -116829.87    -175210.2    -175283.1    3.6800215         4.01         4.01     2.031742 
+    1900   -114.72236   -114.72236 1.5115051e-11 5.0486771e-05   -128.69986            0    2.3533358 2.9233782e-08   -116830.34   -175209.96   -175282.84    1.7771083         4.01         4.01     2.031742 
+    2000   -114.72236   -114.72236 7.5958563e-13 3.2445052e-05   -128.69986            0    2.3533398 1.4691025e-09   -116830.59   -175209.85   -175282.98    1.0460153         4.01         4.01     2.031742 
+    2100   -114.72236   -114.72236 7.0226593e-15 3.6563168e-05   -128.69987            0    2.3533415 1.3582414e-11   -116830.65   -175209.91   -175282.52   0.47133884         4.01         4.01     2.031742 
+    2200   -114.72236   -114.72236 7.5573103e-13 1.1282521e-05   -128.69987            0    2.3533427 1.4616474e-09   -116830.72   -175209.75   -175282.74   0.34271376         4.01         4.01     2.031742 
+    2219   -114.72236   -114.72236 6.1956328e-14 9.5401274e-06   -128.69987            0    2.3533431 1.1982875e-10   -116830.73   -175209.73   -175282.74   0.28759313         4.01         4.01     2.031742 
+Loop time of 1.37224 on 8 procs for 923 steps with 10 atoms
+
+33.3% CPU use with 8 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -114.722364467     -114.722364733     -114.722364733
+  Force two-norm initial, final = 0.00455742 9.54013e-06
+  Force max component initial, final = 0.00148265 4.86666e-06
+  Final line search alpha, max atom move = 0 0
+  Iterations, force evaluations = 923 923
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0012724  | 0.14061    | 0.36685    |  38.0 | 10.25
+Bond    | 0.00041901 | 0.00074194 | 0.0016789  |   1.4 |  0.05
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.87618    | 1.1177     | 1.2532     |  13.5 | 81.45
+Output  | 0.0025486  | 0.0028333  | 0.0036683  |   0.7 |  0.21
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.1104     |            |       |  8.04
+
+Nlocal:    1.25 ave 2 max 0 min
+Histogram: 3 0 0 0 0 0 0 0 0 5
+Nghost:    808.75 ave 810 max 808 min
+Histogram: 5 0 0 0 0 0 0 0 0 3
+Neighs:    332.375 ave 857 max 0 min
+Histogram: 3 1 1 0 0 0 1 0 0 2
+
+Total # of neighbors = 2659
+Ave neighs/atom = 265.9
+Ave special neighs/atom = 1
+Neighbor list builds = 0
+Dangerous builds = 0
+reset_timestep 0
+variable la equal lx
+variable lb equal ly
+variable lc equal lz
+fix AVE_LAT all ave/time 1 10000 20000 v_la v_lb v_lc file ave_lat
+fix AVE_ATOM all ave/atom 1 10000 20000 c_dr[1] c_dr[2] c_dr[3]
+dump core_displ all custom 20000 displcoredump id type f_AVE_ATOM[1] f_AVE_ATOM[2] f_AVE_ATOM[3]
+variable TEMP equal temp
+fix AVE_T all ave/time 1 10000 20000 v_TEMP file ave_temp
+velocity all create 5 146981634 dist gaussian mom yes rot no bias yes temp CSequ
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 10 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 16.5
+  ghost atom cutoff = 16.5
+  binsize = 8.25 -> bins = 1 1 1
+timestep 0.00001
+min_style fire
+minimize 0.0 1e-05 60000 10000
+WARNING: Resetting reneighboring criteria during minimization (/tmp/dan/spack-stage/spack-stage-5I_aA6/lammps-feature-CORESHELL-pol/src/min.cpp:168)
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 16.5
+  ghost atom cutoff = 16.5
+  binsize = 8.25 -> bins = 1 1 1
+Memory usage per processor = 11.1479 Mbytes
+Step TotEng PotEng KinEng Fnorm E_coul E_long E_bond Temp Press Pxx Pyy Pzz Lx Ly Lz 
+       0   -114.72236   -114.72236            0 9.5401262e-06   -128.69987            0    2.3533431            0   -116828.96   -175207.07   -175280.09    0.2875888         4.01         4.01    2.0317727 
+       1   -114.72236   -114.72236 4.0665219e-19 9.5401261e-06   -128.69987            0    2.3533431 7.8649956e-16   -116828.96   -175207.07   -175280.09   0.28758879         4.01         4.01    2.0317727 
+Loop time of 0.00759521 on 8 procs for 1 steps with 10 atoms
+
+26.3% CPU use with 8 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -114.722364733     -114.722364733     -114.722364733
+  Force two-norm initial, final = 9.54013e-06 9.54013e-06
+  Force max component initial, final = 4.86667e-06 4.86667e-06
+  Final line search alpha, max atom move = 0 0
+  Iterations, force evaluations = 1 1
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 8.51e-06   | 0.00056393 | 0.0028145  |   3.7 |  7.42
+Bond    | 8.9803e-07 | 1.9275e-06 | 4.5199e-06 |   0.1 |  0.03
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.0016088  | 0.0038787  | 0.0044268  |   1.4 | 51.07
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.003151   |            |       | 41.48
+
+Nlocal:    1.25 ave 2 max 0 min
+Histogram: 3 0 0 0 0 0 0 0 0 5
+Nghost:    808.75 ave 810 max 808 min
+Histogram: 5 0 0 0 0 0 0 0 0 3
+Neighs:    332.375 ave 857 max 0 min
+Histogram: 3 1 1 0 0 0 1 0 0 2
+
+Total # of neighbors = 2659
+Ave neighs/atom = 265.9
+Ave special neighs/atom = 1
+Neighbor list builds = 0
+Dangerous builds = 0
+reset_timestep 0
+compute re all displace/atom
+reset_timestep 0
+dump dump_displace all custom 1000 displdump id type c_re[1] c_re[2] c_re[3]
+variable STEP equal step
+Total wall time: 0:00:03
