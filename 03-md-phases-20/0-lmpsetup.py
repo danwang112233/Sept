@@ -133,6 +133,13 @@ lmp.command("fix force all aveforce 1.0 1.0 %f" %(Pdamp))
 #lmp.command("fix_modify force press CSequ")
 lmp.command("run %d" %trun)
 lmp.command("unfix force")
+lmp.command("min_style fire")
+lmp.command("minimize 0.0 1e-05 %d 100000" % (2*m_iter) )
+lmp.command("compute dr all displace/atom" )
+lmp.command("reset_timestep 0")
+lmp.command("dump dump_positions all atom %d %s" % (dump_flag, f_atom_dump ))
+lmp.command("dump dump_displace all custom %d %s " % (dump_flag, f_atom_disp) +
+            "id type c_dr[1] c_dr[2] c_dr[3]" )
 
 lx = lmp.extract_variable( "la", "all", 0 )
 ly = lmp.extract_variable( "lb", "all", 0 )
