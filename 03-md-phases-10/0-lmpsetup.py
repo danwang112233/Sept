@@ -124,6 +124,13 @@ lmp.command("fix NPT all npt temp %d %d %f x 1. 1. %f y 1. 1. %f xy 0.0 0.0 %f c
 lmp.command("fix_modify NPT temp CSequ")
 lmp.command("run %d" %trun)
 lmp.command("unfix NPT")
+lmp.command("min_style fire")
+lmp.command("minimize 0.0 1e-05 %d 100000" % (2*m_iter) )
+lmp.command("compute dr all displace/atom" )
+lmp.command("reset_timestep 0")
+lmp.command("dump dump_positions all atom %d %s" % (dump_flag, f_atom_dump ))
+lmp.command("dump dump_displace all custom %d %s " % (dump_flag, f_atom_disp) +
+            "id type c_dr[1] c_dr[2] c_dr[3]" )
 
 lx = lmp.extract_variable( "la", "all", 0 )
 ly = lmp.extract_variable( "lb", "all", 0 )
