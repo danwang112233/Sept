@@ -66,11 +66,11 @@ lmp = lammps()
 lmp.file("manual.system.in")
 lmp.command("change_box all triclinic xy delta %s yz delta %s xz delta %s" \
             " remap" %( XY_DELTA, YZ_DELTA, XZ_DELTA ) )
-lmp.command("compute dr all displace/atom" )
+lmp.command("compute drl all displace/atom" )
 lmp.command("reset_timestep 0")
-lmp.command("dump dump_positions all atom %d %s" % (dump_flag, f_atom_dump ))
-lmp.command("dump dump_displace all custom %d %s " % (dump_flag, f_atom_disp) +
-            "id type c_dr[1] c_dr[2] c_dr[3]" )
+lmp.command("dump dump_positionsl all atom %d %s" % (dump_flag, f_atom_dump ))
+lmp.command("dump dump_displacel all custom %d %s " % (dump_flag, f_atom_disp) +
+            "id type c_drl[1] c_drl[2] c_drl[3]" )
 #-------------------------------------------------OUTPUT CONTROL SETTINGS
 lmp.command("thermo %d" % thermo_flag )
 lmp.command("thermo_style custom step etotal pe ke fnorm ecoul elong ebond " \
