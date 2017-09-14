@@ -91,7 +91,7 @@ lmp.command("variable lb equal ly")
 lmp.command("variable lc equal lz")
 lmp.command("fix AVE_LAT all ave/time %d %d %d v_la v_lb v_lc file %s" \
             %(1, trun, trun+tequilib, f_ave_lat) )
-lmp.command("fix AVE_ATOM all ave/atom %d %d %d c_dr[1] c_dr[2] c_dr[3]" \
+lmp.command("fix AVE_ATOM all ave/atom %d %d %d c_drl[1] c_drl[2] c_drl[3]" \
             %(1, trun, trun+tequilib) )
 lmp.command("dump core_displ all custom %d displcoredump " %(trun+tequilib) +
             "id type f_AVE_ATOM[1] f_AVE_ATOM[2] f_AVE_ATOM[3]" )
