@@ -13,8 +13,8 @@ variable alpha internal 89.81
 
 #'a` and `alpha` are lattice parameters
 
-variable nx internal 1
-variable ny internal 1
+variable nx internal 10
+variable ny internal 10
 
 
 #`nx, ny, nz` are the numbers of RVE replica in each direction
@@ -37,7 +37,7 @@ variable ez equal $(v_ext_ef)/sqrt(3.0)
 label loop
 #nz in range of [10;20;2]
 variable un loop 1 2 pad
-variable nz equal 2*v_un
+variable nz equal 20*v_un
 
 variable llc equal v_a*v_nz
 variable XZ_DELTA equal v_llc*cos(${alpha_r})#correct till now
