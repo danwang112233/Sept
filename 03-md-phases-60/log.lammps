@@ -1,0 +1,7 @@
+LAMMPS (7 Sep 2016)
+label       loop
+variable    a loop 2 10
+print       "A = $a"
+A = 2
+if          "$a = 8" then "next a"
+ERROR: Invalid Boolean syntax in if command (../variable.cpp:4655)

@@ -1,0 +1,7 @@
+label       loop
+variable    a loop 2 10
+print       "A = $a"
+if          "$a = 8" then "next a"
+#next a
+jump       a.in loop
+
