@@ -1,0 +1,8 @@
+label loop
+#nz in range of [10;20;2]
+variable un loop 1 2 pad
+variable nz equal 2*v_un
+print "ny is $(nz)"
+clear
+next        un
+jump        a.in loop
