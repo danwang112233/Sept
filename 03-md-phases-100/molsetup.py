@@ -28,7 +28,7 @@ raw_txt  = """
 # to the Isotropic-anharmonic Shell Model proposed by Tinte based on 
 # Local Density Approximation(LDA) to Density Functional Theory(DFT):
 # doi:10.1016/j.cossms.2006.05.002 \n
-import "../commons/molsetup/%s-unit-dyn-vs.lt" \n \n 
+import "../../commons/molsetup/%s-unit-dyn-vs.lt" \n \n 
 %sCUBIC_BaTiO3_UNIT.scale( %s ) \n
 # Periodic boundary conditions:
 write_once("Data Boundary") {
