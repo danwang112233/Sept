@@ -35,9 +35,7 @@ int main(int argc,char **argv)
 				fout << "dump core_displ_" << i << " all custom 20000 displcoredump id type f_AVE_ATOM[1] f_AVE_ATOM[2] f_AVE_ATOM[3]" << endl;
 				fout <<"variable TEMP equal temp" << endl;
 				fout <<"fix AVE_T all ave/time 1 10000 20000 v_TEMP file ave_temp"  << endl;
-				fout << "fix ef all efield " << ex << " " << ey << " " << ez << endl;
-				fout << "print \" electric field strength = " << exf << " .\"" << endl;
-				fout << "fix_modify ef energy yes " << endl;
+
 				fout <<"#-------------------------------------------------MD SIMULATION SETTINGS" << endl;
 				fout <<"velocity all create 10 146981634 dist gaussian mom yes rot no bias yes temp CSequ" << endl;
 
@@ -45,7 +43,7 @@ int main(int argc,char **argv)
 
 				fout <<"velocity all scale 10 temp CSequ" << endl;
 				fout << "print \" 1.\"" << endl;
-				fout <<"fix NPT all npt temp 10 10 0.1 x 1.0 1.0 0.1 y 1.0 1.0 0.1 xy 0.0 0.0 0.1 couple none" << endl;
+				fout <<"fix NPT all npt temp 1 1 0.1 x 1.0 1.0 0.1 y 1.0 1.0 0.1 xy 0.0 0.0 0.1 couple none" << endl;
 				fout << "print \" 2.\"" << endl;
 				fout <<"fix_modify NPT temp CSequ" << endl;
 				fout << "print \" 3.\"" << endl;
@@ -53,9 +51,15 @@ int main(int argc,char **argv)
 				fout << "print \" 4.\"" << endl;
 				fout <<"unfix NPT" << endl;
 				fout << "print \" 5.\"" << endl;
-				fout <<"fix NPT all npt temp 10 10 0.1 x 1.0 1.0 0.1 y 1.0 1.0 0.1 xy 0.0 0.0 0.1 couple none" << endl;
+//
+				fout << "fix ef all efield " << ex << " " << ey << " " << ez << endl;
+				fout << "print \" electric field strength = " << exf << " .\"" << endl;
+				fout << "fix_modify ef energy yes " << endl;
+//
+				fout <<"fix NPT all npt temp 1 1 0.1 x 1.0 1.0 0.1 y 1.0 1.0 0.1 xy 0.0 0.0 0.01 couple none" << endl;
 				fout <<"fix_modify NPT temp CSequ" << endl;
 				fout <<"run 10000" << endl;
+				fout << "print \" 6.\"" << endl;
 				fout <<"unfix NPT" << endl;
 				//fout << "reset_timestep 0" << endl;
 
