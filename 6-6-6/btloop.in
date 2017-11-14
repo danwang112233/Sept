@@ -104,6 +104,7 @@ thermo_modify temp CSequ
 fix ef all efield 0 0 0
 print " electric field strength = 0"
 fix_modify ef energy yes 
+unfix ef
 
 
 compute pol all polar/atom
