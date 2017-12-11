@@ -19,7 +19,8 @@ else:
     nz = sys.argv[4] 
 lx = str (float(a) * int(nx))
 ly = str (float(a) * int(ny))
-lz = str (float(a) * int(nz) + float(a))
+lz = str (float(a) * int(nz) + float(a)/2.0)
+aa = str (float(a)/2.0)
 
 
 raw_txt  = """
@@ -40,7 +41,7 @@ write_once("Data Boundary") {
 CUBIC_BaTiO3 = new %sCUBIC_BaTiO3_UNIT[%s].move(  %s, 0.0, 0.0)
                                       [%s].move( 0.0,  %s, 0.0)
                                       [%s].move( 0.0, 0.0,  %s)
-"""%( "bt",        "", a, lx, ly, a, lz,     "", nx, a, ny, a, nz, a )
+"""%( "bt",        "", a, lx, ly, aa, lz,     "", nx, a, ny, a, nz, a )
 
 
 #-------------------------------------------------CREATE MOLTEMPLATE FILE
