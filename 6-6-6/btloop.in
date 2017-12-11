@@ -11,14 +11,14 @@
 
 
 
-variable a internal 4.010
-variable alpha internal 89.81
+variable a internal 4.000
+variable alpha internal 89.54
 
 #'a` and `alpha` are lattice parameters
 
 variable nx internal 6
 variable ny internal 6
-variable nz internal 6
+variable nz internal 8
 
 #`n` is the number of RVE replica in each direction
 
