@@ -34,11 +34,13 @@ variable XY_DELTA equal v_llc*cos(${alpha_r})
 variable YZ_DELTA equal v_lla*cos(${alpha_r})
 variable XZ_DELTA equal v_llb*cos(${alpha_r})#correct till now
 
-variable aaa equal 0.0005/sqrt(3)
-
-
-
-
+variable un loop 0 4 pad
+variable ext_ef equal -0.16+v_un*0.08
+#variable nz equal 10
+variable ex equal $(ext_ef)/sqrt(3.0)
+variable ey equal $(ext_ef)/sqrt(3.0)
+variable ez equal $(ext_ef)/sqrt(3.0)
+print "electric field strength = $(v_ext_ef)"
 
 
 
@@ -101,7 +103,7 @@ thermo_style custom step etotal pe ke epair evdwl ecoul elong ebond fnorm lx ly 
 compute CSequ all temp/cs cores shells
 thermo_modify temp CSequ
 
-fix EF all efield $(v_aaa) $(v_aaa) $(v_aaa)
+fix EF all efield $(v_ex) $(v_ey) $(v_ez)
 fix_modify EF energy yes
 min_style quickmin
 minimize 0.0 1e-04 20000 10000
