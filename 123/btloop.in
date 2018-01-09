@@ -68,19 +68,19 @@ comm_modify vel yes
 
 #kspace_style ewald 1.0e-6
 #pair_style   born/coul/long/cs 7.0
-pair_style born/coul/wolf/cs 0.25 16 14.5
+pair_style born/coul/wolf/cs 0.25 12 12
 
 #------------------------ A,  rho, sigma=0,     C,      D 
-pair_coeff	*	*	 0.0000	1.0000	0.000	0.0000	0.000
-pair_coeff	2	6	1588.36	0.3553	0.000	0.0000	0.000
-pair_coeff	4	6	3131.25	0.2591	0.000	0.0000	0.000
-pair_coeff	6	6	2641.41	0.3507	0.000	535.37	0.000
+pair_coeff      *       *        0.0000 1.0000  0.000   0.0000  0.000
+pair_coeff      2       6       1061.3  0.3740  0.000   0.0000  0.000 #864.536 0.38729 0.000    0.0000  0.000
+pair_coeff      4       6       3769.93 0.2589  0.000   0.0000  0.000 #4526.635 0.25239 0.000   0.0000  0.000
+pair_coeff      6       6       4740.00 0.2686  0.000   160.00  0.000   #4102.743 0.29581 0.000 300.00  0.000
 pair_modify tail no
 
 bond_style class2
-bond_coeff	1	0.0	155.820	0.0		   0.0000000
-bond_coeff	2	0.0	166.275	0.0		 20.83333333
-bond_coeff	3	0.0	 23.155	0.0		274.96833333
+bond_coeff      1       0.0     125.9   0.000   0.000
+bond_coeff      2       0.0     161.0   0.000   20.833
+bond_coeff      3       0.0     15.5    0.0     166.67
 
 #-------------------------------------------------INITIALIZATION SETTINGS
 change_box all triclinic xy delta $(v_XY_DELTA) yz delta $(v_YZ_DELTA) xz delta $(v_XZ_DELTA) remap
